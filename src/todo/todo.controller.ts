@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { Todo } from './entities/todo.entity';
 
 @Controller('todo')
@@ -10,8 +10,22 @@ export class TodoController {
   todos: Todo[];
 
   @Get()
-  getTodos() {
+  getTodos(
+    @Query() myQueriesParams
+  ) {
+    console.log(myQueriesParams)
     return this.todos;
+  }
+
+  @Get(':id')
+  getTodoById(
+    @Param('id') id //This id is type string
+  ) {
+    const todo = this.todos.find((actualTodo:Todo) => actualTodo.id === +id) //do we add + to make it an int 
+    if(todo)
+      return todo;
+    else
+      throw new NotFoundException(`Le todo d'id ${id} n'est pas trouvé`);
   }
 
   @Post()
