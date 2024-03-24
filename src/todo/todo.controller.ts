@@ -39,15 +39,33 @@ export class TodoController {
     return newTodo;
   }
 
-  @Delete()
-  deleteTodo() {
-    console.log('supprimer un Todo de liste des Todos');
-    return 'SUPPRIMER TODO';
+  //delete un todo via son id
+  @Delete(':id')
+  deleteTodo(
+    @Param('id') id
+  ) {
+    //chercher l'objet via son index
+    const index = this.todos.findIndex((todo) => todo.id === +id);
+    //utiliser la methode splice pour supprimer le todo
+    if(index>0)
+      this.todos.splice(index,1);
+    else
+      throw new NotFoundException("Le todo spécifié n'est pas dans la listes des todos");
+    //Declencher une erreur
+    return {
+      message: `Le todo d'id ${id} a été supprimé`,
+      count: 1
+    }
   }
 
-  @Put()
-  modifierTodo() {
-    console.log('modifier un Todo de liste des Todos');
-    return 'MODIFIER TODO';
+  @Put(':id')
+  modifierTodo(
+    @Param('id') id,
+    @Body() newTodo: Partial<Todo>
+  ) {
+    const todo = this.getTodoById(id);
+    todo.description = newTodo.description? newTodo.description : todo.description;
+    todo.name = newTodo.name? newTodo.name : todo.name;
+    return todo;
   }
 }
