@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { Todo } from './entities/todo.entity';
 import { addTodoDto } from './dto/add-todo.dto';
 import { GetPaginatedTodoDto } from './dto/get-paginated-todo.dto';
@@ -21,10 +21,12 @@ export class TodoController {
 
   @Get(':id')
   getTodoById(
-    @Param('id') id //This id is type string
+    @Param('id', new ParseIntPipe({
+      errorHttpStatusCode: HttpStatus.NOT_FOUND
+    })) id //This id is type string
   ) 
   {
-      return this.todoService.getTodoById(+id);
+      return this.todoService.getTodoById(id);
   }
 
   @Post()
@@ -35,18 +37,18 @@ export class TodoController {
   //delete un todo via son id
   @Delete(':id')
   deleteTodo(
-    @Param('id') id
+    @Param('id', ParseIntPipe) id //the parseInt is a pipe that makes us remove the need for +id
   ) 
   {
-    return this.todoService.deleteTodo(+id);
+    return this.todoService.deleteTodo(id);
   }
 
   @Put(':id')
   modifierTodo(
-    @Param('id') id,
+    @Param('id', ParseIntPipe) id,
     @Body() newTodo: Partial<addTodoDto>
   ) 
   {
-    return this.todoService.updateTodo(+id, newTodo);
+    return this.todoService.updateTodo(id, newTodo);
   }
 }
