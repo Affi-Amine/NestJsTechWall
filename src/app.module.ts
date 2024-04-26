@@ -12,9 +12,10 @@ import { logger } from './middlewares/first/logger.middleware';
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer): any {
-    consumer.apply(FirstMiddleware, logger).forRoutes(
+    consumer.apply(FirstMiddleware).forRoutes(
       {path:'todo', method: RequestMethod.GET}, //here instead of using the default routing method instead we re using RouteInfo
       {path:'todo*', method: RequestMethod.DELETE}  //the * : every route that starts with todo
-    );
+    )
+    .apply(logger).exclude(""); // for less restrictions... we can use forRoutes and exclude to make it more specific
   }
 }
