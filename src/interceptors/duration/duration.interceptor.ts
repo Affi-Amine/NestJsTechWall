@@ -11,7 +11,7 @@ export class DurationInterceptor implements NestInterceptor {
         () => {
           const dateOut = Date.now();
           console.log('Req ended at : ', dateOut);
-          console.log(`Req time : ${dateIn - dateOut} ms`);
+          console.log(`Req time : ${dateOut - dateIn} ms`);
         }
       )
       );
